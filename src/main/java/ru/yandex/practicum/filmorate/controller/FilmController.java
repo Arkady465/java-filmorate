@@ -2,9 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
-import javax.validation.Valid;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -32,10 +33,10 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             log.error("Фильм с id {} не найден", film.getId());
-            throw new ValidationException("Фильм не найден");
+            throw new NotFoundException("Фильм не найден");
         }
         validateFilm(film);
         films.put(film.getId(), film);
@@ -44,6 +45,11 @@ public class FilmController {
     }
 
     private void validateFilm(Film film) {
+        if (film.getReleaseDate() == null) {
+            log.warn("Дата релиза не указана");
+            throw new ValidationException("Дата релиза обязательна");
+        }
+
         if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             log.warn("Дата релиза {} раньше допустимой даты {}", film.getReleaseDate(), MIN_RELEASE_DATE);
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
