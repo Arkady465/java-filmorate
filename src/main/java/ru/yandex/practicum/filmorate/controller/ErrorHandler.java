@@ -49,4 +49,10 @@ public class ErrorHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Ошибка валидации", "message", errorMessage));
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleRuntimeException(final RuntimeException e) {
+        return Map.of("error", "Внутренняя ошибка сервера", "message", e.getMessage());
+    }
 }
