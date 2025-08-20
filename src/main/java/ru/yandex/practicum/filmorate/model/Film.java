@@ -20,8 +20,6 @@ public class Film {
     @Positive(message = "Продолжительность должна быть положительным числом")
     private int duration;
 
-    // Геттер для количества лайков (может быть полезен при отображении)
-    public int getLikesCount() {
-        return 0; // Реальная реализация будет в сервисе
-    }
+    // Геттер для количества лайков
+    private int likesCount;
 }
