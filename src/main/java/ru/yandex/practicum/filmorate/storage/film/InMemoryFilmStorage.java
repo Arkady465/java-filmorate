@@ -14,7 +14,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getAll() {
-        return new ArrayList<>(films.values());
+        return films.values().stream()
+                .peek(film -> film.setLikesCount(likes.getOrDefault(film.getId(), Collections.emptySet()).size()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -22,6 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         film.setId(idCounter++);
         films.put(film.getId(), film);
         likes.put(film.getId(), new HashSet<>());
+        film.setLikesCount(0);
         return film;
     }
 
@@ -31,12 +34,17 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
         }
         films.put(film.getId(), film);
+        film.setLikesCount(likes.getOrDefault(film.getId(), Collections.emptySet()).size());
         return film;
     }
 
     @Override
     public Optional<Film> getById(int id) {
-        return Optional.ofNullable(films.get(id));
+        return Optional.ofNullable(films.get(id))
+                .map(film -> {
+                    film.setLikesCount(likes.getOrDefault(id, Collections.emptySet()).size());
+                    return film;
+                });
     }
 
     @Override
@@ -51,6 +59,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id " + filmId + " не найден");
         }
         likes.get(filmId).add(userId);
+        films.get(filmId).setLikesCount(likes.get(filmId).size());
     }
 
     @Override
@@ -59,20 +68,15 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id " + filmId + " не найден");
         }
         likes.get(filmId).remove(userId);
+        films.get(filmId).setLikesCount(likes.get(filmId).size());
     }
 
     @Override
     public List<Film> getPopular(int count) {
         return films.values().stream()
-                .sorted((f1, f2) -> Integer.compare(
-                        likes.getOrDefault(f2.getId(), Collections.emptySet()).size(),
-                        likes.getOrDefault(f1.getId(), Collections.emptySet()).size()
-                ))
+                .peek(film -> film.setLikesCount(likes.getOrDefault(film.getId(), Collections.emptySet()).size()))
+                .sorted((f1, f2) -> Integer.compare(f2.getLikesCount(), f1.getLikesCount()))
                 .limit(count)
                 .collect(Collectors.toList());
-    }
-
-    public int getLikesCount(int filmId) {
-        return likes.getOrDefault(filmId, Collections.emptySet()).size();
     }
 }
