@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component ("userInMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private int idCounter = 1;

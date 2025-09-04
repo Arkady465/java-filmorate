@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component ("filmInMemoryUserStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
     private final Map<Integer, Set<Integer>> likes = new HashMap<>();
