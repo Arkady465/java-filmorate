@@ -1,22 +1,28 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Data
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Film {
-    private int id;
+    int id;
 
     @NotBlank(message = "Название не может быть пустым")
-    private String name;
+    String name;
 
     @Size(max = 200, message = "Максимальная длина описания — 200 символов")
-    private String description;
+    String description;
 
     @NotNull(message = "Дата релиза не может быть пустой")
-    private LocalDate releaseDate;
+    LocalDate releaseDate;
 
     @Positive(message = "Продолжительность должна быть положительным числом")
-    private int duration;
+    int duration;
+
+    @JsonIgnore
+    int likesCount;
 }
