@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 
 import java.util.*;
@@ -59,8 +60,7 @@ public class InMemoryUserStorage implements UserStorage {
         User user = users.get(userId);
         User friend = users.get(friendId);
 
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        user.getFriends().put(friendId, FriendshipStatus.UNCONFIRMED);
     }
 
     @Override
@@ -72,14 +72,13 @@ public class InMemoryUserStorage implements UserStorage {
         User friend = users.get(friendId);
 
         user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
     }
 
     @Override
     public List<User> getFriends(int userId) {
         validateUserExists(userId);
         User user = users.get(userId);
-        return user.getFriends().stream()
+        return user.getFriends().keySet().stream()
                 .map(users::get)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -93,8 +92,8 @@ public class InMemoryUserStorage implements UserStorage {
         User user = users.get(userId);
         User otherUser = users.get(otherId);
 
-        return user.getFriends().stream()
-                .filter(otherUser.getFriends()::contains)
+        return user.getFriends().keySet().stream()
+                .filter(otherUser.getFriends().keySet()::contains)
                 .map(users::get)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
