@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -36,6 +37,10 @@ class FilmorateApplicationTests {
 		film.setDescription("Тестовое описание");
 		film.setReleaseDate(LocalDate.of(2000, 1, 1));
 		film.setDuration(120);
+
+		Mpa mpa = new Mpa();
+		mpa.setId(1);
+		film.setMpa(mpa);
 
 		mockMvc.perform(post("/films")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -96,6 +101,10 @@ class FilmorateApplicationTests {
 		film.setReleaseDate(LocalDate.of(2000, 1, 1));
 		film.setDuration(120);
 
+		Mpa mpa = new Mpa();
+		mpa.setId(1);
+		film.setMpa(mpa);
+
 		String filmJson = mockMvc.perform(post("/films")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(film)))
@@ -138,5 +147,25 @@ class FilmorateApplicationTests {
 		// Получаем всех пользователей
 		mockMvc.perform(get("/users"))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testMpaEndpoints() throws Exception {
+		mockMvc.perform(get("/mpa"))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get("/mpa/1"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("G"));
+	}
+
+	@Test
+	void testGenreEndpoints() throws Exception {
+		mockMvc.perform(get("/genres"))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get("/genres/1"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Комедия"));
 	}
 }
