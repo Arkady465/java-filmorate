@@ -133,9 +133,14 @@ public class UserDbStorage implements UserStorage {
 
         Map<Integer, FriendshipStatus> friends = new HashMap<>();
         for (Map<String, Object> row : rows) {
-            int friendId = (Integer) row.get("friend_id");
-            String status = (String) row.get("status");
-            friends.put(friendId, FriendshipStatus.valueOf(status));
+            try {
+                int friendId = (Integer) row.get("friend_id");
+                String status = (String) row.get("status");
+                friends.put(friendId, FriendshipStatus.valueOf(status));
+            } catch (Exception e) {
+                // Логируем ошибку, но не прерываем выполнение
+                System.err.println("Error loading friend: " + e.getMessage());
+            }
         }
 
         user.setFriends(friends);
