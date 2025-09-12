@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -49,7 +48,7 @@ public class FilmDbStorage implements FilmStorage {
         int id = simpleJdbcInsert.executeAndReturnKey(values).intValue();
         film.setId(id);
 
-        if (CollectionUtils.isNotEmpty(film.getGenres())) {
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             updateFilmGenres(film);
         }
 
@@ -73,7 +72,7 @@ public class FilmDbStorage implements FilmStorage {
 
         // Обновляем жанры
         jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", film.getId());
-        if (CollectionUtils.isNotEmpty(film.getGenres())) {
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             updateFilmGenres(film);
         }
 

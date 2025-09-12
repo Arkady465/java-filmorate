@@ -58,8 +58,6 @@ public class InMemoryUserStorage implements UserStorage {
         validateUserExists(friendId);
 
         User user = users.get(userId);
-        User friend = users.get(friendId);
-
         user.getFriends().put(friendId, FriendshipStatus.UNCONFIRMED);
     }
 
@@ -69,8 +67,6 @@ public class InMemoryUserStorage implements UserStorage {
         validateUserExists(friendId);
 
         User user = users.get(userId);
-        User friend = users.get(friendId);
-
         user.getFriends().remove(friendId);
     }
 
