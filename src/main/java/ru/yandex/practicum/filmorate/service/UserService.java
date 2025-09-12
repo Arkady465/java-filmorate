@@ -17,12 +17,9 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        try {
-            return userStorage.getAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Error getting all users", e);
-        }
+        return userStorage.getAll();
     }
+
     public User createUser(User user) {
         return userStorage.create(user);
     }
