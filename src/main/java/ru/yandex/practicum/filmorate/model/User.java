@@ -5,8 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -26,6 +26,6 @@ public class User {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
-    @JsonIgnore // Чтобы поле не участвовало в сериализации/десериализации
-    Set<Integer> friends = new HashSet<>();
+    @JsonIgnore
+    Map<Integer, FriendshipStatus> friends = new HashMap<>();
 }
